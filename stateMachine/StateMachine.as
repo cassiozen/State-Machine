@@ -1,4 +1,4 @@
-package state
+package stateMachine
 {
 	import flash.events.*;
 	import flash.utils.Dictionary; 

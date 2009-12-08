@@ -1,4 +1,4 @@
-package state
+package stateMachine
 {
 	public class State
 	{
