@@ -2,9 +2,6 @@ package state
 {
 	import flash.events.*;
 	import flash.utils.Dictionary; 
-	import patota.debug.* 
-	import patota.debug.log; 
-	import br.com.stimuli.string.printf;
 
 	public class StateMachine extends EventDispatcher
 	{
@@ -21,7 +18,6 @@ package state
 		public var parentStates:Array;
 		/* @private */
 		public var path:Array;
-		private var _logger:Logger;
 		
 		/**
 		 * Creates a generic StateMachine. Available states can be set with addState and initial state can
@@ -60,8 +56,6 @@ package state
 		public function StateMachine()
 		{
 			_states = new Dictionary();
-			_logger = new Logger();
-			_logger.addFilter("fsm");
 		}
 
 		/**
@@ -72,7 +66,7 @@ package state
 		**/
 		public function addState(stateName:String, stateData:Object=null):void
 		{
-			if(stateName in _states) warning(id,printf("Overriding existing state %s", stateName));
+			if(stateName in _states) trace("[StateMachine]",id,"Overriding existing state " + stateName);
 			if(stateData == null) stateData = {};
 			_states[stateName] = new State(stateName, stateData.from, stateData.enter, stateData.exit, _states[stateData.parent])
 		}
@@ -184,14 +178,14 @@ package state
 		{
 			// If there is no state that maches stateTo
 			if (!(stateTo in _states)){
-				log().fsm(id,printf("Cannot make transition: State %s is not defined", stateTo));
+				trace("[StateMachine]",id,"Cannot make transition: State "+ stateTo +" is not defined");
 				return;
 			}
 			
 			// If current state is not allowed to make this transition
 			if(!canChangeStateTo(stateTo))
 			{
-				warning(id,printf("Transition to %s denied", stateTo));
+				trace("[StateMachine]",id,"Transition to "+ stateTo +" denied");
 				_outEvent = new StateMachineEvent(StateMachineEvent.TRANSITION_DENIED);
 				_outEvent.fromState = _state;
 				_outEvent.toState = stateTo;
@@ -246,7 +240,7 @@ package state
 					_states[_state].enter.call(null,_enterCallbackEvent);
 				}
 			}
-			log().fsm(id,printf("State Changed to %s", _state));
+			trace("[StateMachine]",id,"State Changed to " + _state);
 			
 			// Transition is complete. dispatch TRANSITION_COMPLETE
 			_outEvent = new StateMachineEvent(StateMachineEvent.TRANSITION_COMPLETE);
