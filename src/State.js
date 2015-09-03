@@ -8,7 +8,7 @@ package stateMachine
 		public var exit:Function;
 		public var _parent:State;
 		public var children:Array;
-		
+
 		public function State(name:String, from:Object = null, enter:Function = null, exit:Function = null, parent:State = null)
 		{
 			this.name = name;
@@ -23,18 +23,18 @@ package stateMachine
 				_parent.children.push(this);
 			}
 		}
-		
+
 		public function set parent(parent:State):void
 		{
 			_parent = parent;
 			_parent.children.push(this);
 		}
-		
+
 		public function get parent():State
 		{
 			return _parent;
 		}
-		
+
 		public function get root():State
 		{
 			var parentState:State = _parent;

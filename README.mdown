@@ -1,10 +1,10 @@
-AS3 State Machine
+State Machine
 =================
 
 About
 -----
 
-This package allows you to create simple and hierarchical StateMachines. 
+This package allows you to create simple and hierarchical StateMachines.
 State Machines are composed of states, and each state has (optional) callbacks for entering and exiting state. It's also possible to restrict the transition from states using the from property.
 
 Learn more about state machines and its applications on http://ai-depot.com/FiniteStateMachines/FSM.html
@@ -20,17 +20,17 @@ The following example creates a state machine for a player model with 3 states (
 		 playerSM.addState("playing",{ enter: onPlayingEnter, exit: onPlayingExit, from:["paused","stopped"] });
 		 playerSM.addState("paused",{ enter: onPausedEnter, from:"playing"});
 		 playerSM.addState("stopped",{ enter: onStoppedEnter, from:"*"});
-		 
+
 		 playerSM.addEventListener(StateMachineEvent.TRANSITION_DENIED,transitionDeniedFunction);
 		 playerSM.addEventListener(StateMachineEvent.TRANSITION_COMPLETE,transitionCompleteFunction);
-		 
+
 		 playerSM.initialState = "stopped";
 
 
 It's also possible to create hierarchical state machines using the argument "parent" in the addState method. This example shows the creation of a hierarchical state machine for the monster of a game (Its a simplified version of the state machine used to control the AI in the original Quake game)
 
 		 monsterSM = new StateMachine()
-		 
+
 		 monsterSM.addState("idle",{enter:onIdle, from:"attack"})
 		 monsterSM.addState("attack",{enter:onAttack, from:"idle"})
 		 monsterSM.addState("melee attack",{parent:"atack", enter:onMeleeAttack, from:"attack"})
@@ -38,12 +38,12 @@ It's also possible to create hierarchical state machines using the argument "par
 		 monsterSM.addState("punch",{parent:"melle attack", enter:onPunch})
 		 monsterSM.addState("missle attack",{parent:"attack", enter:onMissle})
 		 monsterSM.addState("die",{enter:onDead, from:"attack", enter:onDie})
-		 
+
 		 monsterSM.initialState = "idle"
-		 
+
 License
 -------
 
-Copyright (c) 2009-10 Cássio S. Antonio
+Copyright (c) 2009-15 Cássio M. Antonio
 
-AS3-FSM is released under the Open Source MIT license, which gives you the possibility to use it and modify it in every circumstance.
+Released under the Open Source MIT license, which gives you the possibility to use it and modify it in every circumstance.

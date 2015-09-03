@@ -1,0 +1,16 @@
+{
+  "name": "js-state-machine",
+  "version": "0.0.1",
+  "description": "Finite State Machine for Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "event-emitter": "^0.3.3",
+    "install": "^0.1.8",
+    "npm": "^2.14.1"
+  }
+}

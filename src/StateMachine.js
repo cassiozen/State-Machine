@@ -1,7 +1,7 @@
 package stateMachine
 {
 	import flash.events.*;
-	import flash.utils.Dictionary; 
+	import flash.utils.Dictionary;
 
 	public class StateMachine extends EventDispatcher
 	{
@@ -18,7 +18,7 @@ package stateMachine
 		public var parentStates:Array;
 		/* @private */
 		public var path:Array;
-		
+
 		/**
 		 * Creates a generic StateMachine. Available states can be set with addState and initial state can
 		 * be set using initialState setter.
@@ -29,19 +29,19 @@ package stateMachine
 		 *	playerSM.addState("playing",{ enter: onPlayingEnter, exit: onPlayingExit, from:["paused","stopped"] });
 		 *	playerSM.addState("paused",{ enter: onPausedEnter, from:"playing"});
 		 *	playerSM.addState("stopped",{ enter: onStoppedEnter, from:"*"});
-		 *	
+		 *
 		 *	playerSM.addEventListener(StateMachineEvent.TRANSITION_DENIED,transitionDeniedFunction);
 		 *	playerSM.addEventListener(StateMachineEvent.TRANSITION_COMPLETE,transitionCompleteFunction);
-		 *	
+		 *
 		 *	playerSM.initialState = "stopped";
-		 * </pre> 
+		 * </pre>
 		 *
 		 * It's also possible to create hierarchical state machines using the argument "parent" in the addState method
 		 * @example This example shows the creation of a hierarchical state machine for the monster of a game
 		 * (Its a simplified version of the state machine used to control the AI in the original Quake game)
 		 *	<pre>
 		 *	monsterSM = new StateMachine()
-		 *	
+		 *
 		 *	monsterSM.addState("idle",{enter:onIdle, from:"attack"})
 		 *	monsterSM.addState("attack",{enter:onAttack, from:"idle"})
 		 *	monsterSM.addState("melee attack",{parent:"atack", enter:onMeleeAttack, from:"attack"})
@@ -49,7 +49,7 @@ package stateMachine
 		 *	monsterSM.addState("punch",{parent:"melle attack", enter:onPunch})
 		 *	monsterSM.addState("missle attack",{parent:"attack", enter:onMissle})
 		 *	monsterSM.addState("die",{enter:onDead, from:"attack", enter:onDie})
-		 *	
+		 *
 		 *	monsterSM.initialState = "idle"
 		 *	</pre>
 		*/
@@ -80,10 +80,10 @@ package stateMachine
 		{
 			if (_state == null && stateName in _states){
 				_state = stateName;
-				
+
 				var _callbackEvent:StateMachineEvent = new StateMachineEvent(StateMachineEvent.ENTER_CALLBACK);
 				_callbackEvent.toState = stateName;
-					
+
 				if(_states[_state].root){
 					parentStates = _states[_state].parents
 					for(var j:int = _states[_state].parents.length-1; j>=0; j--){
@@ -93,7 +93,7 @@ package stateMachine
 						}
 					}
 				}
-			
+
 				if(_states[_state].enter){
 					_callbackEvent.currentState = _state
 					_states[_state].enter.call(null,_callbackEvent)
@@ -111,19 +111,19 @@ package stateMachine
 		{
 			return _states[_state];
 		}
-		
+
 		public function get states():Dictionary
 		{
 			return _states;
 		}
-		
+
 		public function getStateByName( name:String ):State
 		{
 			for each( var s:State in _states ){
 				if( s.name == name )
 					return s;
 			}
-			
+
 			return null;
 		}
 		/**
@@ -181,7 +181,7 @@ package stateMachine
 				trace("[StateMachine]",id,"Cannot make transition: State "+ stateTo +" is not defined");
 				return;
 			}
-			
+
 			// If current state is not allowed to make this transition
 			if(!canChangeStateTo(stateTo))
 			{
@@ -193,7 +193,7 @@ package stateMachine
 				dispatchEvent(_outEvent);
 				return;
 			}
-			
+
 			// call exit and enter callbacks (if they exits)
 			path = findPath(_state,stateTo);
 			if(path[0]>0)
@@ -201,7 +201,7 @@ package stateMachine
 				var _exitCallbackEvent:StateMachineEvent = new StateMachineEvent(StateMachineEvent.EXIT_CALLBACK);
 				_exitCallbackEvent.toState = stateTo;
 				_exitCallbackEvent.fromState = _state;
-				
+
 				if(_states[_state].exit){
 					_exitCallbackEvent.currentState = _state;
 					_states[_state].exit.call(null,_exitCallbackEvent);
@@ -223,7 +223,7 @@ package stateMachine
 				var _enterCallbackEvent:StateMachineEvent = new StateMachineEvent(StateMachineEvent.ENTER_CALLBACK);
 				_enterCallbackEvent.toState = stateTo;
 				_enterCallbackEvent.fromState = oldState;
-				
+
 				if(_states[stateTo].root)
 				{
 					parentStates = _states[stateTo].parents
@@ -241,7 +241,7 @@ package stateMachine
 				}
 			}
 			trace("[StateMachine]",id,"State Changed to " + _state);
-			
+
 			// Transition is complete. dispatch TRANSITION_COMPLETE
 			_outEvent = new StateMachineEvent(StateMachineEvent.TRANSITION_COMPLETE);
 			_outEvent.fromState = oldState ;
