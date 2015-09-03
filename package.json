@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Cássio M. Antonio",
+  "license": "MIT",
   "dependencies": {
     "event-emitter": "^0.3.3",
     "install": "^0.1.8",
