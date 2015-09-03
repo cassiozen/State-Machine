@@ -1,70 +1,50 @@
-package stateMachine
-{
-	public class State
-	{
-		public var name:String;
-		public var from:Object;
-		public var enter:Function;
-		public var exit:Function;
-		public var _parent:State;
-		public var children:Array;
+export default class State {
+  construtor(name:string, from:Object, enter:Function, exit:Function, parent:State) {
+    this.name = name;
+    this.from = from || "*";
+    this.enter = enter;
+    this.exit = exit;
+    this.children = [];
+    if (parent)
+    {
+      this._parent = parent;
+      _parent.children.push(this);
+    }
+  }
 
-		public function State(name:String, from:Object = null, enter:Function = null, exit:Function = null, parent:State = null)
-		{
-			this.name = name;
-			if (!from) from = "*";
-			this.from = from;
-			this.enter = enter;
-			this.exit = exit;
-			this.children = [];
-			if (parent)
-			{
-				_parent = parent;
-				_parent.children.push(this);
-			}
-		}
+  set parent(parent):void {
+    this._parent = parent;
+    this._parent.children.push(this);
+  }
 
-		public function set parent(parent:State):void
-		{
-			_parent = parent;
-			_parent.children.push(this);
-		}
+  get parent():State {
+    return this._parent;
+  }
 
-		public function get parent():State
-		{
-			return _parent;
-		}
+  get root():State {
+    let parentState:State = this._parent;
+    if(parentState)
+    {
+      while (parentState.parent)
+      {
+        parentState = parentState.parent;
+      }
+    }
+    return parentState;
+  }
 
-		public function get root():State
-		{
-			var parentState:State = _parent;
-			if(parentState)
-			{
-				while (parentState.parent)
-				{
-					parentState = parentState.parent;
-				}
-			}
-			return parentState;
-		}
-		public function get parents():Array
-		{
-			var parentList:Array = [];
-			var parentState:State = _parent;
-			if(parentState)
-			{
-				parentList.push(parentState);
-				while (parentState.parent)
-				{
-					parentState = parentState.parent;
-					parentList.push(parentState);
-				}
-			}
-			return parentList;
-		}
-		public function toString():String
-		{
-			return this.name;
-		}
-	}
-}
+  get parents():Array {
+    let parentList:Array = [];
+    let parentState:State = this._parent;
+    if(parentState)
+    {
+      parentList.push(parentState);
+      while (parentState.parent)
+      {
+        parentState = parentState.parent;
+        parentList.push(parentState);
+      }
+    }
+    return parentList;
+  }
+};
