@@ -1,18 +1,28 @@
+/* @flow */
+
 export default class State {
-  construtor(name:string, from:Object, enter:Function, exit:Function, parent:State) {
+
+  name: string;
+  from: any;
+  enter: Function;
+  exit: Function;
+  parent: State;
+  children: Array<State>;
+  _parent: State;
+
+  construtor(name:string, from:any, enter:Function, exit:Function, parent:State) {
     this.name = name;
     this.from = from || "*";
     this.enter = enter;
     this.exit = exit;
     this.children = [];
-    if (parent)
-    {
+    if ((typeof parent !== "undefined" && parent !== null)) {
       this._parent = parent;
-      _parent.children.push(this);
+      this._parent.children.push(this);
     }
   }
 
-  set parent(parent):void {
+  set parent(parent:State):void {
     this._parent = parent;
     this._parent.children.push(this);
   }
@@ -23,8 +33,7 @@ export default class State {
 
   get root():State {
     let parentState:State = this._parent;
-    if(parentState)
-    {
+    if ((typeof parentState !== "undefined" && parentState !== null)) {
       while (parentState.parent)
       {
         parentState = parentState.parent;
@@ -33,11 +42,10 @@ export default class State {
     return parentState;
   }
 
-  get parents():Array {
-    let parentList:Array = [];
+  get parents():Array<State> {
+    let parentList:Array<State> = [];
     let parentState:State = this._parent;
-    if(parentState)
-    {
+    if ((typeof parentState !== "undefined" && parentState !== null)) {
       parentList.push(parentState);
       while (parentState.parent)
       {
@@ -47,4 +55,4 @@ export default class State {
     }
     return parentList;
   }
-};
+}

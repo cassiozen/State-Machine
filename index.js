@@ -1,2 +1,1 @@
-import StateMachine from './lib/StateMachine'
-export {StateMachine};
+module.exports = require('./lib/StateMachine');
