@@ -1,13 +1,24 @@
 {
-  "name": "js-state-machine",
-  "version": "0.0.1",
-  "description": "Finite State Machine for Javascript",
+  "name": "hierarchical-fsm",
+  "version": "0.1.0",
+  "description": "Hierarchical Finite State Machine for Javascript",
+  "keywords": [
+    "statemachine",
+    "state machine",
+    "finite state machine",
+    "hierarchical state machine",
+    "state machines"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "Cássio M. Antonio",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cassiozen/State-Machine.git"
+  },
   "dependencies": {
     "event-emitter": "^0.3.3"
   },
