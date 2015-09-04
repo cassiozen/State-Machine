@@ -1,7 +1,6 @@
 /* @flow */
 
 export default class State {
-
   name: string;
   from: any;
   enter: Function;
