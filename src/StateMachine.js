@@ -6,6 +6,8 @@ import State from './State';
 const ENTER_EVENT:string = 'enter';
 const TRANSITION_COMPLETE_EVENT:string = 'transition_complete';
 const TRANSITION_DENIED_EVENT:string = 'transition_denied';
+
+const emitter = new EventEmitter();
 /**
  * Creates a generic StateMachine. Available states can be set with addState and initial state can
  * be set using initialState setter.
@@ -40,22 +42,26 @@ const TRANSITION_DENIED_EVENT:string = 'transition_denied';
  *	monsterSM.initialState = "idle"
  *	</pre>
 */
-export default class StateMachine extends EventEmmiter {
-	state:string;
-	states:Object;
+export default class StateMachine {
+	_state:string;
+	_states:Array<State>;
 	parentState:State;
 	parentStates:Array<State>;
 	path:Array<number>;
 
   constructor(){
-		super();
-    this.states = {};
+    this._states = [];
     this.parentStates = [];
     this.path = [];
+
   }
 
+	emit(){
+		emitter.emit(...arguments);
+	}
+
   hasState(stateName:string):boolean {
-    return Object.keys(this.states).indexOf(stateName) !== -1;
+    return Object.keys(this._states).indexOf(stateName) !== -1;
   }
 
   /**
@@ -69,7 +75,7 @@ export default class StateMachine extends EventEmmiter {
       console.log("[StateMachine] Overriding existing state " + stateName);
     }
 
-    this.states[stateName] = new State(stateName, stateData.from, stateData.enter, stateData.exit, this.states[stateData.parent]);
+    this._states[stateName] = new State(stateName, stateData.from, stateData.enter, stateData.exit, this._states[stateData.parent]);
   }
 
   /**
@@ -78,13 +84,13 @@ export default class StateMachine extends EventEmmiter {
    * stateName	The name of the State
   **/
   set initialState(stateName:string):void {
-    if (this.state === undefined && this.hasState(stateName)) {
-      this.state = stateName;
+    if (this._state === undefined && this.hasState(stateName)) {
+      this._state = stateName;
 
       // Invoke the enter callback for all parent states down from the root parent of the state we're transitioning into
 
-      if(typeof this.states[this.state].root !== "undefined" && this.states[this.state].root !== null){
-        let parentStates:Array<State> = this.states[this.state].parents;
+      if(typeof this._states[this._state].root !== "undefined" && this._states[this._state].root !== null){
+        let parentStates:Array<State> = this._states[this._state].parents;
         for (parentState of parentStates) {
 
           if(parentState.enter !== null && typeof parentState.enter === "function"){
@@ -94,8 +100,8 @@ export default class StateMachine extends EventEmmiter {
       }
 
       // Invoke the enter callback of the state we're transitioning into
-      if(this.states[this.state].enter !== null && typeof this.states[this.state].enter === "function"){
-        this.states[this.state].enter.call(this, {currentState: this.state});
+      if(this._states[this._state].enter !== null && typeof this._states[this._state].enter === "function"){
+        this._states[this._state].enter.call(this, {currentState: this._state});
       }
 
       this.emit(TRANSITION_COMPLETE_EVENT, {toState:stateName});
@@ -106,15 +112,15 @@ export default class StateMachine extends EventEmmiter {
 	 *	Getters for the current state and for the Dictionary of states
 	 */
 	get state():string {
-		return this.states[this.state];
+		return this._states[this._state];
 	}
 
 	get states():Object {
-		return this.states;
+		return this._states;
 	}
 
 	getStateByName(name:string):any	{
-		for (state of this.states) {
+		for (state of this._states) {
 			if(state.name === name){
 				return state;
 			}
@@ -127,7 +133,7 @@ export default class StateMachine extends EventEmmiter {
 	 * stateName	The name of the State
 	**/
 	canChangeStateTo(stateName:string):boolean {
-		return (stateName !== this.state && ( this.states[stateName].from.indexOf(this.state)!== -1) || this.states[stateName].from === '*' );
+		return (stateName !== this._state && ( this._states[stateName].from.indexOf(this._state)!== -1) || this._states[stateName].from === '*' );
 	}
 
 	/**
@@ -138,13 +144,13 @@ export default class StateMachine extends EventEmmiter {
 	**/
 	findPath(stateFrom:string, stateTo:string):Array<number> {
 		// Verifies if the states are in the same "branch" or have a common parent
-		let fromState:State = this.states[stateFrom];
+		let fromState:State = this._states[stateFrom];
 		let c:number = 0;
 		let d:number = 0;
 		while (fromState)
 		{
 			d=0;
-			let toState:State = this.states[stateTo];
+			let toState:State = this._states[stateTo];
 			while (toState)
 			{
 				if(fromState == toState)
@@ -180,21 +186,21 @@ export default class StateMachine extends EventEmmiter {
 		{
 			console.warn("[StateMachine] Transition to "+ stateTo +" denied");
 			this.emit(TRANSITION_COMPLETE_EVENT, {
-				fromState:this.state,
+				fromState:this._state,
 				toState:stateTo,
-				allowedStates: this.states[stateTo].from
+				allowedStates: this._states[stateTo].from
 			});
 			return;
 		}
 
 		// call exit and enter callbacks (if they exits)
-		let path:Array<number> = this.findPath(this.state,stateTo);
+		let path:Array<number> = this.findPath(this._state,stateTo);
 		if(path[0]>0){
-			if(this.states[this.state].exit !== null && typeof this.states[this.state].exit === "function"){
-				this.states[this.state].exit.call(null,{currentState: this.state});
+			if(this._states[this._state].exit !== null && typeof this._states[this._state].exit === "function"){
+				this._states[this._state].exit.call(null,{currentState: this._state});
 			};
 
-			let parentState:State = this.states[this.state];
+			let parentState:State = this._states[this._state];
 
 			for(let i:number=0; i<path[0]-1; i++)
 			{
@@ -204,12 +210,12 @@ export default class StateMachine extends EventEmmiter {
 				}
 			}
 		}
-		let oldState:String = this.state;
-		this.state = stateTo;
+		let oldState:String = this._state;
+		this._state = stateTo;
 		if(path[1]>0)
 		{
-			if(typeof this.states[stateTo].root !== "undefined" && this.states[stateTo].root !== null){
-				let parentStates:Array<State> = this.states[stateTo].parents;
+			if(typeof this._states[stateTo].root !== "undefined" && this._states[stateTo].root !== null){
+				let parentStates:Array<State> = this._states[stateTo].parents;
 				for(var k:number = path[1]-2; k>=0; k--){
 					if(typeof parentStates[k] !== "undefined" &&
 					parentStates[k] !== null &&
@@ -219,11 +225,11 @@ export default class StateMachine extends EventEmmiter {
 					}
 				}
 			}
-			if(this.states[this.state].enter !== null && typeof this.states[this.state].enter === "function"){
-				this.states[this.state].enter.call(null,{currentState: this.state});
+			if(this._states[this._state].enter !== null && typeof this._states[this._state].enter === "function"){
+				this._states[this._state].enter.call(null,{currentState: this._state});
 			}
 		}
-		console.log("[StateMachine] State Changed to " + this.state);
+		console.log("[StateMachine] State Changed to " + this._state);
 
 		// Transition is complete. dispatch TRANSITION_COMPLETE
 		this.emit(TRANSITION_COMPLETE_EVENT, {fromState:oldState, toState:stateTo});
