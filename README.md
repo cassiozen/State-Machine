@@ -40,11 +40,13 @@ It's also possible to create hierarchical state machines using the argument "par
  monsterSM.initialState = "idle";
 ```
 
+### Install
+* [npm](http://npmjs.org/): `npm install --save hierarchical-fsm`
+* [Download](https://raw.githubusercontent.com/cassiozen/State-Machine/master/lib/StateMachine.js)
+
 ### Ports
 * [ActionScript 3](https://github.com/cassiozen/State-Machine/tree/as3)
 * [Lua (Corona)](https://github.com/JesusEspejo/Lua-Corona-SDK-State-Machine)
-
-
 
 ### License
 
