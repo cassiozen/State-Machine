@@ -1,17 +1,13 @@
 State Machine
 =============
 
-About
------
-
+### About
 This module allows you to create simple and hierarchical StateMachines.
 State Machines are composed of states, and each state has (optional) callbacks for entering and exiting state. It's also possible to restrict the transition from states using the from property.
 
 Learn more about state machines and its applications on http://ai-depot.com/FiniteStateMachines/FSM.html
 
-
-Usage
------
+### Usage
 Available states can be set with addState and initial state can be set using initialState setter.
 
 The following example creates a state machine for a player model with 3 states (Playing, paused and stopped)
@@ -44,15 +40,13 @@ It's also possible to create hierarchical state machines using the argument "par
  monsterSM.initialState = "idle";
 ```
 
-Ports
------
+### Ports
 * [ActionScript 3](https://github.com/cassiozen/State-Machine/tree/as3)
 * [Lua (Corona)](https://github.com/JesusEspejo/Lua-Corona-SDK-State-Machine)
 
 
 
-License
--------
+### License
 
 Copyright (c) 2009-15 Cássio M. Antonio
 
