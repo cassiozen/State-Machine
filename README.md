@@ -1,5 +1,5 @@
-State Machine
-=============
+Hierarchical State Machine
+==========================
 
 ### About
 This module allows you to create simple and hierarchical StateMachines.
