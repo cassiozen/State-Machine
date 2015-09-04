@@ -29,28 +29,27 @@ const emitter = new EventEmitter();
  * @example This example shows the creation of a hierarchical state machine for the monster of a game
  * (Its a simplified version of the state machine used to control the AI in the original Quake game)
  *	<pre>
- *	monsterSM = new StateMachine()
+ *  var monsterSM = new StateMachine()
+ *  monsterSM.addState("idle",{enter:this.onIdle, from:["smash", "punch", "missle attack"]})
+ *  monsterSM.addState("attack",{enter:this.onAttack, from:"idle"})
+ *  monsterSM.addState("melee attack",{parent:"attack", enter:this.onMeleeAttack, from:"attack"})
+ *  monsterSM.addState("smash",{parent:"melee attack", enter:this.onSmash})
+ *  monsterSM.addState("punch",{parent:"melee attack", enter:this.onPunch})
+ *  monsterSM.addState("missle attack",{parent:"attack", enter:this.onMissle})
+ *  monsterSM.addState("die",{enter:this.onDead, from:["smash", "punch", "missle attack"]})
  *
- *	monsterSM.addState("idle",{enter:onIdle, from:"attack"})
- *	monsterSM.addState("attack",{enter:onAttack, from:"idle"})
- *	monsterSM.addState("melee attack",{parent:"atack", enter:onMeleeAttack, from:"attack"})
- *	monsterSM.addState("smash",{parent:"melle attack", enter:onSmash})
- *	monsterSM.addState("punch",{parent:"melle attack", enter:onPunch})
- *	monsterSM.addState("missle attack",{parent:"attack", enter:onMissle})
- *	monsterSM.addState("die",{enter:onDead, from:"attack", enter:onDie})
- *
- *	monsterSM.initialState = "idle"
+ *  monsterSM.initialState = "idle"
  *	</pre>
 */
 export default class StateMachine {
 	_state:string;
-	_states:Array<State>;
+	_states:Object;
 	parentState:State;
 	parentStates:Array<State>;
 	path:Array<number>;
 
   constructor(){
-    this._states = [];
+    this._states = {};
     this.parentStates = [];
     this.path = [];
 
@@ -58,6 +57,14 @@ export default class StateMachine {
 
 	emit(){
 		emitter.emit(...arguments);
+	}
+
+	on(){
+		emitter.on(...arguments);
+	}
+
+	off(){
+		emitter.off(...arguments);
 	}
 
   hasState(stateName:string):boolean {
@@ -185,7 +192,7 @@ export default class StateMachine {
 		if(!this.canChangeStateTo(stateTo))
 		{
 			console.warn("[StateMachine] Transition to "+ stateTo +" denied");
-			this.emit(TRANSITION_COMPLETE_EVENT, {
+			this.emit(TRANSITION_DENIED_EVENT, {
 				fromState:this._state,
 				toState:stateTo,
 				allowedStates: this._states[stateTo].from
