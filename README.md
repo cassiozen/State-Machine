@@ -2,10 +2,8 @@ Hierarchical State Machine
 ==========================
 
 ### About
-This module allows you to create simple and hierarchical StateMachines.
-State Machines are composed of states, and each state has (optional) callbacks for entering and exiting state. It's also possible to restrict the transition from states using the from property.
-
-Learn more about state machines and its applications on http://ai-depot.com/FiniteStateMachines/FSM.html
+This module allows you to create both single-level and hierarchical finite state machines.
+State Machines are composed of states, and each state has (optional) callbacks for entering and exiting state. It's also possible to restrict the transition from states using the *from* property.
 
 ### Usage
 Available states can be set with addState and initial state can be set using initialState setter.
