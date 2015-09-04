@@ -8,39 +8,39 @@ const TRANSITION_COMPLETE_EVENT:string = 'transition_complete';
 const TRANSITION_DENIED_EVENT:string = 'transition_denied';
 
 const emitter = new EventEmitter();
-/**
+/*
  * Creates a generic StateMachine. Available states can be set with addState and initial state can
  * be set using initialState setter.
- * @example This sample creates a state machine for a player model with 3 states (Playing, paused and stopped)
+ * This sample creates a state machine for a player model with 3 states (Playing, paused and stopped)
  * <pre>
- *	playerSM = new StateMachine();
+ *  var playerSM = new StateMachine();
  *
- *	playerSM.addState("playing",{ enter: onPlayingEnter, exit: onPlayingExit, from:["paused","stopped"] });
- *	playerSM.addState("paused",{ enter: onPausedEnter, from:"playing"});
- *	playerSM.addState("stopped",{ enter: onStoppedEnter, from:"*"});
+ *  playerSM.addState("playing",{ enter: this.onPlayingEnter, exit: this.onPlayingExit, from:["paused","stopped"] });
+ *  playerSM.addState("paused",{ enter: this.onPausedEnter, from:"playing"});
+ *  playerSM.addState("stopped",{ enter: this.onStoppedEnter, from:"*"});
  *
- *	playerSM.addEventListener(StateMachineEvents.TRANSITION_DENIED,transitionDeniedFunction);
- *	playerSM.addEventListener(StateMachineEvents.TRANSITION_COMPLETE,transitionCompleteFunction);
+ *  playerSM.on('transition_denied', this.handleTransitionDenied);
+ *  playerSM.on('transition_complete', this.handleTransitionComplete);
  *
- *	playerSM.initialState = "stopped";
+ *  playerSM.initialState = "stopped";
  * </pre>
  *
  * It's also possible to create hierarchical state machines using the argument "parent" in the addState method
- * @example This example shows the creation of a hierarchical state machine for the monster of a game
+ * This example shows the creation of a hierarchical state machine for the monster of a game
  * (Its a simplified version of the state machine used to control the AI in the original Quake game)
  *	<pre>
- *  var monsterSM = new StateMachine()
- *  monsterSM.addState("idle",{enter:this.onIdle, from:["smash", "punch", "missle attack"]})
- *  monsterSM.addState("attack",{enter:this.onAttack, from:"idle"})
- *  monsterSM.addState("melee attack",{parent:"attack", enter:this.onMeleeAttack, from:"attack"})
- *  monsterSM.addState("smash",{parent:"melee attack", enter:this.onSmash})
- *  monsterSM.addState("punch",{parent:"melee attack", enter:this.onPunch})
- *  monsterSM.addState("missle attack",{parent:"attack", enter:this.onMissle})
- *  monsterSM.addState("die",{enter:this.onDead, from:["smash", "punch", "missle attack"]})
+ *   var monsterSM = new StateMachine()
+ *   monsterSM.addState("idle",{enter:this.onIdle, from:["smash", "punch", "missle attack"]})
+ *   monsterSM.addState("attack",{enter:this.onAttack, from:"idle"})
+ *   monsterSM.addState("melee attack",{parent:"attack", enter:this.onMeleeAttack, from:"attack"})
+ *   monsterSM.addState("smash",{parent:"melee attack", enter:this.onSmash})
+ *   monsterSM.addState("punch",{parent:"melee attack", enter:this.onPunch})
+ *   monsterSM.addState("missle attack",{parent:"attack", enter:this.onMissle})
+ *   monsterSM.addState("die",{enter:this.onDead, from:["smash", "punch", "missle attack"]})
  *
- *  monsterSM.initialState = "idle"
+ *   monsterSM.initialState = "idle"
  *	</pre>
-*/
+ */
 export default class StateMachine {
 	_state:string;
 	_states:Object;
@@ -71,12 +71,12 @@ export default class StateMachine {
     return Object.keys(this._states).indexOf(stateName) !== -1;
   }
 
-  /**
+  /*
    * Adds a new state
    * stateName	The name of the new State
    * stateData	An objct containing state enter and exit callbacks and allowed states to transition from
    * The "from" property can be a string or and array with the state names or * to allow any transition
-  **/
+   */
   addState(stateName:string, stateData:Object = {}):void {
     if(this.hasState(stateName)){
       console.log("[StateMachine] Overriding existing state " + stateName);
@@ -85,11 +85,11 @@ export default class StateMachine {
     this._states[stateName] = new State(stateName, stateData.from, stateData.enter, stateData.exit, this._states[stateData.parent]);
   }
 
-  /**
+  /*
    * Sets the first state, calls enter callback and dispatches TRANSITION_COMPLETE
    * These will only occour if no state is defined
    * stateName	The name of the State
-  **/
+   */
   set initialState(stateName:string):void {
     if (this._state === undefined && this.hasState(stateName)) {
       this._state = stateName;
@@ -115,7 +115,7 @@ export default class StateMachine {
     }
   }
 
-	/**
+	/*
 	 *	Getters for the current state and for the Dictionary of states
 	 */
 	get state():string {
@@ -135,20 +135,20 @@ export default class StateMachine {
 		return null;
 	}
 
-	/**
+	/*
 	 * Verifies if a transition can be made from the current state to the state passed as param
 	 * stateName	The name of the State
-	**/
+	 */
 	canChangeStateTo(stateName:string):boolean {
 		return (stateName !== this._state && ( this._states[stateName].from.indexOf(this._state)!== -1) || this._states[stateName].from === '*' );
 	}
 
-	/**
+	/*
 	 * Discovers the how many "exits" and how many "enters" are there between two
 	 * given states and returns an array with these two integers
 	 * stateFrom The state to exit
 	 * stateTo The state to enter
-	**/
+	 */
 	findPath(stateFrom:string, stateTo:string):Array<number> {
 		// Verifies if the states are in the same "branch" or have a common parent
 		let fromState:State = this._states[stateFrom];
@@ -175,12 +175,12 @@ export default class StateMachine {
 		return [c,d];
 	}
 
-	/**
+	/*
 	 * Changes the current state
 	 * This will only be done if the intended state allows the transition from the current state
 	 * Changing states will call the exit callback for the exiting state and enter callback for the entering state
 	 * stateTo	The name of the state to transition to
-	**/
+	 */
 	changeState(stateTo:string):void {
 		// If there is no state that maches stateTo
 		if (!this.hasState(stateTo)){
