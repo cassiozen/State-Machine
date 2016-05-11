@@ -44,6 +44,7 @@ It's also possible to create hierarchical state machines using the argument "par
 
 ### Ports
 * [ActionScript 3](https://github.com/cassiozen/State-Machine/tree/as3)
+* [Dart](https://github.com/JesterXL/Dart-JXL-State-Machine)
 * [Lua (Corona)](https://github.com/JesusEspejo/Lua-Corona-SDK-State-Machine)
 
 ### License
