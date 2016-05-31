@@ -49,6 +49,6 @@ It's also possible to create hierarchical state machines using the argument "par
 
 ### License
 
-Copyright (c) 2009-15 Cássio M. Antonio
+Copyright (c) 2009-16 Cássio M. Antonio
 
 Released under the Open Source MIT license, which gives you the possibility to use it and modify it in every circumstance.
